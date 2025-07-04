@@ -68,6 +68,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/settings', [App\Http\Controllers\AdminController::class, 'updateSettings'])->name('settings.update');
     Route::delete('/users/{id}', [App\Http\Controllers\AdminController::class, 'deleteUser'])->name('users.destroy');
     Route::patch('/users/{id}/toggle-status', [App\Http\Controllers\AdminController::class, 'toggleUserStatus'])->name('users.toggle-status');
+    Route::get('/trip-requests/{id}/view', [App\Http\Controllers\AdminController::class, 'viewTripRequest'])->name('trip-requests.view');
 });
 
 // Legacy routes (for backward compatibility)
@@ -109,3 +110,5 @@ Route::get('/debug/vehicles', function () {
         'vehicles' => $vehicles->toArray()
     ];
 });
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

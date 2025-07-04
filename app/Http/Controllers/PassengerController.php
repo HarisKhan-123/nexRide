@@ -192,12 +192,7 @@ class PassengerController extends Controller
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'phone' => 'required|string|max:20',
-            'address' => 'required|string|max:255',
-        ], [
-            'user_id.exists' => 'User not found.',
-            'phone.required' => 'Phone number is required.',
-            'address.required' => 'Address is required.',
+            'address' => 'nullable|string|max:255',
         ]);
 
         // Check if passenger profile already exists
@@ -209,11 +204,14 @@ class PassengerController extends Controller
                     'passenger' => $existingPassenger
                 ], 409); // Conflict status code
             } else {
-                return redirect('/passenger/dashboard')->with('warning', '⚠️ Passenger profile already exists! You can now access your dashboard.');
+                return redirect('/passenger/dashboard')->with('success', 'Passenger profile already exists! You can now access your dashboard.');
             }
         }
 
-        $passenger = Passenger::create($validated);
+        $passenger = Passenger::create([
+            'id' => $validated['user_id'],
+            'address' => $validated['address'] ?? null,
+        ]);
         
         if ($request->expectsJson()) {
             return response()->json([

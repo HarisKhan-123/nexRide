@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('drivers', function (Blueprint $table) {
-            $table->decimal('latitude', 10, 8)->nullable()->after('address');
-            $table->decimal('longitude', 11, 8)->nullable()->after('latitude');
+            // $table->decimal('latitude', 10, 8)->nullable()->after('address');
+            // $table->decimal('longitude', 11, 8)->nullable()->after('latitude');
         });
 
         Schema::table('users', function (Blueprint $table) {
-            $table->boolean('is_online')->default(false)->after('role');
+            // $table->boolean('is_online')->default(false)->after('role');
         });
     }
 

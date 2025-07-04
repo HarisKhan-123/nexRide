@@ -239,7 +239,11 @@ class DriverController extends Controller
         $totalEarnings = $earnings->sum('amount');
         $monthlyEarnings = $earnings->where('created_at', '>=', now()->startOfMonth())->sum('amount');
 
-        return view('payments', compact('earnings', 'totalEarnings', 'monthlyEarnings'));
+        return view('payments', [
+            'payments' => $earnings,
+            'totalEarnings' => $totalEarnings,
+            'monthlyEarnings' => $monthlyEarnings,
+        ]);
     }
 
     public function reviews()
@@ -288,20 +292,10 @@ class DriverController extends Controller
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'license_number' => 'required|string|max:50|unique:drivers,license_number',
-            'experience_years' => 'required|integer|min:0|max:50',
-            'phone' => 'required|string|max:20',
-            'address' => 'required|string|max:255',
-        ], [
-            'user_id.exists' => 'User not found.',
-            'license_number.required' => 'License number is required.',
-            'license_number.unique' => 'This license number is already registered. Please use a different license or contact support.',
-            'experience_years.required' => 'Years of driving experience is required.',
-            'experience_years.integer' => 'Experience years must be a number.',
-            'experience_years.min' => 'Experience years cannot be negative.',
-            'experience_years.max' => 'Experience years cannot exceed 50.',
-            'phone.required' => 'Phone number is required.',
-            'address.required' => 'Address is required.',
+            'license_number' => 'nullable|string|max:50|unique:drivers,license_number',
+            'experience_years' => 'nullable|integer|min:0|max:50',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:255',
         ]);
 
         // Check if driver profile already exists
@@ -313,16 +307,16 @@ class DriverController extends Controller
                     'driver' => $existingDriver
                 ], 409); // Conflict status code
             } else {
-                return redirect('/driver/dashboard')->with('warning', '⚠️ Driver profile already exists! You can now access your dashboard.');
+                return redirect('/driver/dashboard')->with('success', 'Driver profile already exists! You can now access your dashboard.');
             }
         }
 
         $driver = Driver::create([
             'id' => $validated['user_id'],
-            'license_number' => $validated['license_number'],
-            'experience_years' => $validated['experience_years'],
-            'phone' => $validated['phone'],
-            'address' => $validated['address'],
+            'license_number' => $validated['license_number'] ?? null,
+            'experience_years' => $validated['experience_years'] ?? null,
+            'phone' => $validated['phone'] ?? null,
+            'address' => $validated['address'] ?? null,
         ]);
         
         if ($request->expectsJson()) {

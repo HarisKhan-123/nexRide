@@ -113,4 +113,8 @@ class AdminController extends Controller
         $reviews = \App\Models\Review::with(['trip.driver.user', 'trip.tripRequest.passenger.user'])->get();
         return view('reviews', compact('reviews'));
     }
+    public function viewTripRequest($id) {
+        $tripRequest = \App\Models\TripRequest::with(['passenger.user', 'trip', 'driver.user'])->findOrFail($id);
+        return view('admin.trip_request_view', compact('tripRequest'));
+    }
 } 
